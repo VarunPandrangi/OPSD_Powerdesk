@@ -1,0 +1,35 @@
+# OPSD PowerDesk Configuration
+
+countries:
+  - DE
+  - FR
+  - ES
+
+data:
+  source: data/time_series_60min_singleindex.csv
+  output_dir: outputs/
+
+forecasting:
+  splits:
+    train: 0.8
+    dev: 0.1
+    test: 0.1
+  backtest:
+    stride: 24
+    horizon: 24
+    warmup: 2000
+
+anomaly_detection:
+  z_score:
+    window: 336
+    min_periods: 168
+    threshold: 3.0
+  cusum:
+    k: 0.5
+    h: 5.0
+
+simulation:
+  hours: 2000
+  drift_alpha: 0.1
+  drift_window_days: 30
+  refit_window_days: 90
