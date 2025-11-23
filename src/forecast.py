@@ -17,8 +17,8 @@ OUTPUT_DIR = 'outputs/'
 COUNTRIES = ['DE', 'FR', 'ES']
 MODEL_ORDERS = {
     'DE': {'order': (2, 0, 1), 'seasonal_order': (1, 1, 1, 24)},
-    'FR': {'order': (2, 0, 0), 'seasonal_order': (1, 1, 1, 24)},
-    'ES': {'order': (2, 0, 1), 'seasonal_order': (1, 1, 1, 24)}
+    'FR': {'order': (2, 0, 2), 'seasonal_order': (1, 1, 1, 24)},
+    'ES': {'order': (1, 0, 2), 'seasonal_order': (1, 1, 1, 24)}
 }
 
 def load_data(country_code):

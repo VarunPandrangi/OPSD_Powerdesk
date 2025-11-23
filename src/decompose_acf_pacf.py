@@ -105,8 +105,8 @@ def find_best_sarima(series, d, D):
     # P: 0, 1
     # Q: 0, 1
     
-    ps = [1, 2]
-    qs = [0, 1]
+    ps = [0, 1, 2]
+    qs = [0, 1, 2]
     Ps = [0, 1]
     Qs = [0, 1]
     

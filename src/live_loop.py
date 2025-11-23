@@ -11,7 +11,8 @@ warnings.filterwarnings("ignore")
 OUTPUT_DIR = 'outputs/'
 COUNTRY = 'DE' # Selected country
 SIMULATION_HOURS = 2000
-HISTORY_WINDOW_HOURS = 90 * 24 # 90 days for refit
+START_HISTORY_HOURS = 120 * 24 # 120 days start history
+ROLLING_WINDOW_HOURS = 90 * 24 # 90 days for refit
 DRIFT_WINDOW_HOURS = 30 * 24 # 30 days for drift threshold
 METRIC_WINDOW_HOURS = 7 * 24 # 7 days for metrics
 
@@ -53,7 +54,11 @@ def get_splits(df):
     
     # We start simulation at the beginning of Test set
     # But we need history (Train+Dev) for the initial model
+    # Requirement: Live start history 120d
     history_df = df.iloc[:dev_end]
+    if len(history_df) > START_HISTORY_HOURS:
+        history_df = history_df.iloc[-START_HISTORY_HOURS:]
+        
     test_df = df.iloc[dev_end:]
     
     return history_df, test_df
@@ -66,7 +71,7 @@ def calculate_mase(y_true, y_pred, y_train_history, seasonality=24):
     # We use a fixed slice of history for denominator stability or rolling?
     # Standard MASE uses in-sample naive error.
     # We'll use the last 90 days of history for the denominator to be relevant.
-    y_hist = y_train_history[-HISTORY_WINDOW_HOURS:]
+    y_hist = y_train_history[-ROLLING_WINDOW_HOURS:]
     naive_errors = np.abs(y_hist[seasonality:] - y_hist[:-seasonality])
     d = np.mean(naive_errors)
     
@@ -92,8 +97,8 @@ def run_simulation():
     # Initial Model Fit
     # Fit on last 90 days of history to be consistent with strategy
     print("Initializing model...")
-    init_train_data = history_df.iloc[-HISTORY_WINDOW_HOURS:]
-    init_train_exog = history_exog.iloc[-HISTORY_WINDOW_HOURS:]
+    init_train_data = history_df.iloc[-ROLLING_WINDOW_HOURS:]
+    init_train_exog = history_exog.iloc[-ROLLING_WINDOW_HOURS:]
     
     model = SARIMAX(init_train_data['load'], 
                     exog=init_train_exog,
@@ -281,8 +286,8 @@ def run_simulation():
             refit_exog = pd.concat([current_history_exog, current_exog_row])
             
             # Take last 90 days
-            train_load_subset = refit_load[-HISTORY_WINDOW_HOURS:]
-            train_exog_subset = refit_exog.iloc[-HISTORY_WINDOW_HOURS:]
+            train_load_subset = refit_load[-ROLLING_WINDOW_HOURS:]
+            train_exog_subset = refit_exog.iloc[-ROLLING_WINDOW_HOURS:]
             
             # Refit Model
             try:
