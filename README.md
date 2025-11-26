@@ -180,13 +180,15 @@ streamlit run src/dashboard_app.py
 
 ## Results
 
-### SARIMA Orders (Selected via BIC)
+### SARIMA Orders (Used in Forecasting)
 
 | Country | Order (p,d,q) | Seasonal (P,D,Q,s) |
 |---------|---------------|-------------------|
-| DE | (2, 1, 2) | (1, 1, 1, 24) |
-| FR | (1, 1, 2) | (1, 1, 1, 24) |
-| ES | (2, 1, 2) | (1, 1, 1, 24) |
+| DE | (2, 0, 1) | (1, 1, 1, 24) |
+| FR | (2, 0, 2) | (1, 1, 1, 24) |
+| ES | (1, 0, 2) | (1, 1, 1, 24) |
+
+Note: Orders were selected via BIC grid search during the decomposition phase and stored in config.yaml.
 
 ### Forecasting Performance
 
